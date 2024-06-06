@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  mysql_read_db:
+    image: mysql:latest
+    container_name: mysql_read_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root1
+    volumes:
+      - mysql_read_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  mysql_write_db:
+    image: mysql:latest
+    container_name: mysql_write_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root2
+    volumes:
+      - mysql_write_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+
+volumes:
+  mysql_read_data:
+  mysql_write_data:
