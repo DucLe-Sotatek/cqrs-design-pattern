@@ -1,29 +1,27 @@
 package com.javatechie.service;
 
+
 import com.google.common.collect.Lists;
 import com.javatechie.dto.ProductEvent;
 import com.javatechie.dto.ProductUploadReq;
 import com.javatechie.entity.Product;
 import com.javatechie.repository.ProductRepository;
 import com.javatechie.util.CsvUtil;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Slf4j
 @Service
 public class ProductCommandService {
 
-    @Autowired
-    private ProductRepository repository;
+    @Autowired private ProductRepository repository;
 
-    @Autowired
-    private KafkaTemplate<String, Object> kafkaTemplate;
+    @Autowired private KafkaTemplate<String, Object> kafkaTemplate;
 
     public Product createProduct(ProductEvent productEvent) {
         Product productDO = repository.save(productEvent.getProduct());
@@ -56,22 +54,19 @@ public class ProductCommandService {
         return l;
     }
 
-
     public void bulkSave(List<Product> products, int batchSize) {
-        Lists.partition(products, batchSize).forEach(
-                child -> repository.saveAll(child)
-        );
+        Lists.partition(products, batchSize).forEach(child -> repository.saveAll(child));
     }
 
     public long syncProductsV1() {
         List<Product> products = repository.findAll();
-        Lists.partition(products, 1000).forEach(
-                part -> {
-                    ArrayList<Product> data = new ArrayList<>(part);
-                    kafkaTemplate.send("product_sync_all_v1", data);
-                    log.info("Sent {} prods", part.size());
-                }
-        );
+        Lists.partition(products, 1000)
+                .forEach(
+                        part -> {
+                            ArrayList<Product> data = new ArrayList<>(part);
+                            kafkaTemplate.send("product_sync_all_v1", data);
+                            log.info("Sent {} prods", part.size());
+                        });
         return 1;
     }
 }

@@ -28,6 +28,12 @@ public class ProductQueryService {
 
     @KafkaListener(topics = "product-event-topic", groupId = "product-event-group")
     public void processProductEvents(ProductEvent productEvent) {
+        long start = System.currentTimeMillis();
+        createOrUpdateProduct(productEvent);
+        log.info("createOrUpdateProduct took {}", System.currentTimeMillis() - start);
+    }
+
+    private void createOrUpdateProduct(ProductEvent productEvent) {
         Product product = productEvent.getProduct();
         if (productEvent.getEventType().equals("CreateProduct")) {
             repository.save(product);

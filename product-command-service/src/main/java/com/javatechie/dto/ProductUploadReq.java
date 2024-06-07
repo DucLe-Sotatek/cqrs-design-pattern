@@ -1,5 +1,6 @@
 package com.javatechie.dto;
 
+
 import com.javatechie.entity.Product;
 import com.opencsv.bean.CsvBindByName;
 import lombok.Data;
@@ -17,10 +18,6 @@ public class ProductUploadReq {
     private int price;
 
     public Product toProduct() {
-        return Product.builder()
-                .name(name)
-                .description(description)
-                .price(price)
-                .build();
+        return Product.builder().name(name).description(description).price(price).build();
     }
 }

@@ -1,5 +1,6 @@
 package com.javatechie.controller;
 
+
 import com.javatechie.dto.ProductEvent;
 import com.javatechie.entity.Product;
 import com.javatechie.service.ProductCommandService;
@@ -12,8 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/products")
 public class ProductCommandController {
 
-    @Autowired
-    private ProductCommandService commandService;
+    @Autowired private ProductCommandService commandService;
 
     @PostMapping
     public Product createProduct(@RequestBody ProductEvent productEvent) {
