@@ -21,7 +21,7 @@ public class ProductCommandController {
     }
 
     @PutMapping("/{id}")
-    public Product updateProduct(@PathVariable long id, @RequestBody ProductEvent productEvent) {
+    public Product updateProduct(@PathVariable String id, @RequestBody ProductEvent productEvent) {
         return commandService.updateProduct(id, productEvent);
     }
 
@@ -29,5 +29,11 @@ public class ProductCommandController {
     @ResponseStatus(HttpStatus.CREATED)
     public long uploadProducts(@RequestParam("file") MultipartFile file) {
         return commandService.uploadProducts(file);
+    }
+
+    @PostMapping("/sync")
+    @ResponseStatus(HttpStatus.CREATED)
+    public long syncProducts() {
+        return commandService.syncProductsV1();
     }
 }

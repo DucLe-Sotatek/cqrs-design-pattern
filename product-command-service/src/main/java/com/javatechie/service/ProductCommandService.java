@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -33,7 +32,7 @@ public class ProductCommandService {
         return productDO;
     }
 
-    public Product updateProduct(long id, ProductEvent productEvent) {
+    public Product updateProduct(String id, ProductEvent productEvent) {
         Product existingProduct = repository.findById(id).get();
         Product newProduct = productEvent.getProduct();
         existingProduct.setName(newProduct.getName());
@@ -62,5 +61,17 @@ public class ProductCommandService {
         Lists.partition(products, batchSize).forEach(
                 child -> repository.saveAll(child)
         );
+    }
+
+    public long syncProductsV1() {
+        List<Product> products = repository.findAll();
+        Lists.partition(products, 1000).forEach(
+                part -> {
+                    ArrayList<Product> data = new ArrayList<>(part);
+                    kafkaTemplate.send("product_sync_all_v1", data);
+                    log.info("Sent {} prods", part.size());
+                }
+        );
+        return 1;
     }
 }

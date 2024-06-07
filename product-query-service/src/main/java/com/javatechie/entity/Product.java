@@ -2,8 +2,11 @@ package com.javatechie.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.LinkedHashMap;
 
 @Entity
 @Table(name = "PRODUCT_QUERY", indexes = {
@@ -18,13 +21,20 @@ import lombok.NoArgsConstructor;
         @Index(columnList = "price, description"),
 })
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Product {
     @Id
-    @GeneratedValue
-    private Long id;
+    private String id;
     private String name;
     private String description;
     private double price;
+
+    public Product(LinkedHashMap<Object, Object> event) {
+        this.id = (String) event.get("id");
+        this.name = (String) event.get("name");
+        this.description = (String) event.get("description");
+        this.price = (double) event.get("price");
+    }
 }
