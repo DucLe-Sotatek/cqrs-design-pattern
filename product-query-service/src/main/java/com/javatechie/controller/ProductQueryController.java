@@ -1,6 +1,5 @@
 package com.javatechie.controller;
 
-import com.javatechie.dto.ProductEvent;
 import com.javatechie.entity.Product;
 import com.javatechie.service.ProductQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,7 @@ public class ProductQueryController {
     private ProductQueryService queryService;
 
     @GetMapping
-    public List<Product> fetchAllProducts(){
+    public List<Product> fetchAllProducts() {
         return queryService.getProducts();
     }
 

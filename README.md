@@ -14,6 +14,7 @@ curl --location 'http://localhost:9191/products' \
     }
 }'
 ```
+
 ### UpdateProduct Event
 
 ```

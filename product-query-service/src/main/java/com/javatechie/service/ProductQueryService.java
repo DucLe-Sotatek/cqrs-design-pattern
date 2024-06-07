@@ -1,9 +1,7 @@
 package com.javatechie.service;
 
-import com.google.common.collect.Lists;
 import com.javatechie.dto.ProductEvent;
 import com.javatechie.entity.Product;
-import com.javatechie.entity.ProductSyncEvent;
 import com.javatechie.repository.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -25,7 +22,7 @@ public class ProductQueryService {
         return repository.findAll();
     }
 
-    @KafkaListener(topics = "product-event-topic",groupId = "product-event-group")
+    @KafkaListener(topics = "product-event-topic", groupId = "product-event-group")
     public void processProductEvents(ProductEvent productEvent) {
         Product product = productEvent.getProduct();
         if (productEvent.getEventType().equals("CreateProduct")) {
