@@ -1,15 +1,20 @@
 package com.javatechie.service;
 
+import com.javatechie.dto.FilterProductReq;
 import com.javatechie.dto.ProductEvent;
 import com.javatechie.entity.Product;
 import com.javatechie.repository.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.logging.Filter;
 
 @Slf4j
 @Service
@@ -18,8 +23,9 @@ public class ProductQueryService {
     @Autowired
     private ProductRepository repository;
 
-    public List<Product> getProducts() {
-        return repository.findAll();
+    public List<Product> getProducts(FilterProductReq req) {
+        final Pageable pageable = PageRequest.of(req.page(), req.size());
+        return repository.filterProducts(req.name(), req.description(),req.priceFrom(), req.priceTo(), pageable);
     }
 
     @KafkaListener(topics = "product-event-topic", groupId = "product-event-group")
