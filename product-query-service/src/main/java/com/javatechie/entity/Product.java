@@ -5,7 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
-import java.util.LinkedHashMap;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,11 +31,4 @@ public class Product {
     private String name;
     private String description;
     private double price;
-
-    public Product(LinkedHashMap<Object, Object> event) {
-        this.id = (String) event.get("id");
-        this.name = (String) event.get("name");
-        this.description = (String) event.get("description");
-        this.price = (double) event.get("price");
-    }
 }

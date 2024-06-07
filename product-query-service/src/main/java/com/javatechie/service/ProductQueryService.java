@@ -1,6 +1,7 @@
 package com.javatechie.service;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.javatechie.dto.FilterProductReq;
 import com.javatechie.dto.ProductEvent;
 import com.javatechie.entity.Product;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class ProductQueryService {
 
     @Autowired private ProductRepository repository;
+    @Autowired private ObjectMapper objectMapper;
 
     public List<Product> getProducts(FilterProductReq req) {
         final Pageable pageable = PageRequest.of(req.page(), req.size());
@@ -49,7 +51,7 @@ public class ProductQueryService {
 
     @KafkaListener(topics = "product_sync_all_v1", groupId = "product_sync_group")
     public void processSyncAllProductsEventV1(List<LinkedHashMap<Object, Object>> syncProdEvents) {
-        final List<Product> products = syncProdEvents.stream().map(Product::new).toList();
+        final List<Product> products = syncProdEvents.stream().map(el -> objectMapper.convertValue(el, Product.class)).toList();
         repository.saveAll(products);
         log.info("Synced :: {} record", products.size());
     }
