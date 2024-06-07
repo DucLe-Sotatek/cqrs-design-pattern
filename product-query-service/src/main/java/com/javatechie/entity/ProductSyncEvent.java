@@ -1,5 +1,6 @@
 package com.javatechie.entity;
 
+
 import lombok.Data;
 
 @Data
