@@ -51,7 +51,10 @@ public class ProductQueryService {
 
     @KafkaListener(topics = "product_sync_all_v1", groupId = "product_sync_group")
     public void processSyncAllProductsEventV1(List<LinkedHashMap<Object, Object>> syncProdEvents) {
-        final List<Product> products = syncProdEvents.stream().map(el -> objectMapper.convertValue(el, Product.class)).toList();
+        final List<Product> products =
+                syncProdEvents.stream()
+                        .map(el -> objectMapper.convertValue(el, Product.class))
+                        .toList();
         repository.saveAll(products);
         log.info("Synced :: {} record", products.size());
     }
