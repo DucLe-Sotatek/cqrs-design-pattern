@@ -84,8 +84,8 @@ public class ProductCommandService {
         }
 
         CsvParserSettings settings = new CsvParserSettings();
-        settings.setMaxCharsPerColumn(10000); // Adjust as necessary
-        settings.setDelimiterDetectionEnabled(true);
+        settings.setHeaderExtractionEnabled(true);
+        settings.selectFields("description", "name", "amount");
         CsvParser parser = new CsvParser(settings);
 
         try (BufferedReader reader =
@@ -115,9 +115,9 @@ public class ProductCommandService {
 
     private Product getFromRow(String[] row) {
         return Product.builder()
-                .description(row[1])
-                .name(row[2])
-                .price(Double.parseDouble(row[3]))
+                .description(row[0])
+                .name(row[1])
+                .price(Double.parseDouble(row[2]))
                 .build();
     }
 
