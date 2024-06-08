@@ -36,4 +36,10 @@ public class ProductCommandController {
     public long syncProducts() {
         return commandService.syncProductsV1();
     }
+
+    @PostMapping("/upload_and_sync")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void uploadAndSync(@RequestParam("file") MultipartFile file) {
+        commandService.doUploadAndSync(file);
+    }
 }

@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 @UtilityClass
 public class CsvUtil {
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T> List<T> convertToModel(MultipartFile file, Class<T> responseType) {
         List<T> models;
         try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
