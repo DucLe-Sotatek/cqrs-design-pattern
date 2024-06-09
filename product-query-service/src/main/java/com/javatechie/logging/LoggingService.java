@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-@EnableScheduling
+//@EnableScheduling
 public class LoggingService {
     @Autowired private MeterRegistry meterRegistry;
 

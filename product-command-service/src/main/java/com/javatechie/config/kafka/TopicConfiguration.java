@@ -10,7 +10,7 @@ public class TopicConfiguration {
 
     @Bean
     public NewTopic syncTopic() {
-        return new NewTopic("product_sync_all_v1", 3, (short) 1);
+        return new NewTopic("product_sync_all_v1", 1, (short) 1);
     }
 
     @Bean

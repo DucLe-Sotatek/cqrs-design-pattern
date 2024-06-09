@@ -13,11 +13,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -128,24 +128,23 @@ public class ProductCommandService {
     }
 
     private void processBatch(List<Product> products) {
-        final List<Product> savedProducts = new ArrayList<>();
+        final List<Product> savedProducts = Collections.synchronizedList(new ArrayList<>());
         final ExecutorService executorService = Executors.newFixedThreadPool(MAX_HANDLE_THREAD);
         final List<CompletableFuture<List<Product>>> futures = new ArrayList<>();
-        Lists.partition(products, MAX_ROW_HANDLED_IN_ONE_TREAD).forEach(
-                part -> {
-                    futures.add(
-                            CompletableFuture.supplyAsync(
-                                    () -> productRepository.saveAll(part),
-                                    executorService
-                            ).whenCompleteAsync(
-                                    (result , throwable) -> {
-                                        savedProducts.addAll(result);
-                                    }
-                            )
-                    );
-                }
-        );
+        Lists.partition(products, MAX_ROW_HANDLED_IN_ONE_TREAD)
+                .forEach(
+                        part -> {
+                            futures.add(
+                                    CompletableFuture.supplyAsync(
+                                                    () -> productRepository.saveAll(part),
+                                                    executorService)
+                                            .whenCompleteAsync(
+                                                    (result, throwable) -> {
+                                                        savedProducts.addAll(result);
+                                                    }));
+                        });
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+        log.info("Saved {} products in command server, syncing...", savedProducts.size());
         kafkaTemplate.send("product_sync_all_v1", savedProducts);
     }
 }
